@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Epic Web Hub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body and general layout */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: white;
+      display: flex;
+      height: 100vh;
+      overflow-y: auto; /* Allow scrolling */
+      margin: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      height: 100vh;
+      width: 0;
+      position: fixed;
+      left: 0;
+      top: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 50px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar a {
+      padding: 16px;
+      text-decoration: none;
+      font-size: 22px;
+      color: white;
+      display: block;
+      transition: 0.3s;
+      text-align: center;
+    }
+
+    .sidebar a:hover {
+      background-color: #444;
+      color: #00ff99;
+    }
+
+    /* Button to open sidebar */
+    .sidebar-btn {
+      font-size: 30px;
+      color: #fff;
+      background-color: transparent;
+      border: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    /* Main content area */
+    .main-content {
+      margin-left: 0;
+      width: 100%;
+      padding: 20px;
+      transition: margin-left 0.5s;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    /* Updated title with a cooler name */
+    .title {
+      font-size: 6.5rem; /* Slightly smaller size for better fitting */
+      font-weight: bold;
+      color: #00ff99;
+      text-transform: uppercase;
+      animation: pulse 1.5s infinite alternate;
+      margin-top: 10vh;
+      text-align: center;
+      white-space: nowrap; /* Keeps the title in one line */
+    }
+
+    @keyframes pulse {
+      0% {
+        text-shadow: 0 0 20px #00ff99, 0 0 40px #00ff99, 0 0 60px #00ff99;
+        transform: scale(1);
+      }
+      100% {
+        text-shadow: 0 0 40px #00ff99, 0 0 80px #00ff99, 0 0 120px #00ff99;
+        transform: scale(1.1);
+      }
+    }
+
+    /* Scrollable info section */
+    .info-section {
+      padding: 30px;
+      margin-top: 50px;
+      text-align: center;
+      color: #ccc;
+      background-color: #222;
+      border-radius: 8px;
+      width: 90%;
+      margin: 0 auto;
+      display: none; /* Hidden initially */
+    }
+
+    .info-section h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .info-section p {
+      font-size: 1.2rem;
+    }
+
+    .info-section .author-info {
+      margin-top: 20px;
+      font-style: italic;
+    }
+
+    /* Hover effect for sidebar */
+    .sidebar:hover {
+      width: 250px;
+    }
+
+    .sidebar a:hover {
+      font-size: 24px;
+    }
+    .subtitle {
+  font-size: 1.5rem;
+  color: #fff;
+  text-align: center;
+  margin-top: 1rem;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  animation: glowSub 2s ease-in-out infinite alternate;
+}
+
+@keyframes glowSub {
+  from {
+    text-shadow: 0 0 8px #ffffffaa;
+  }
+  to {
+    text-shadow: 0 0 16px #ffffff;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Sidebar Menu -->
+  <div class="sidebar" id="sidebar">
+    <a href="#" onclick="navigateTo('gameVault')">Game Vault</a>
+    <a href="#" onclick="navigateTo('noteWall')">Anonymous Note Wall</a>
+    <a href="#" onclick="navigateTo('mysteryBox')">Mystery Box</a>
+    <a href="#" onclick="navigateTo('spinner')">What Should I Do? Spinner</a>
+    <a href="#" onclick="navigateTo('leaderboard')">Leaderboard</a>
+  </div>
+
+  <!-- Button to open sidebar -->
+  <button class="sidebar-btn" onclick="toggleSidebar()">☰</button>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Title of the Hub -->
+    <div class="title">Nova</div>
+    <p class="subtitle">Games, challenges, randomness, and more!</p>
+
+  </div>
+
+  <!-- Scrollable Info Section (appears after scroll) -->
+  <div class="info-section" id="infoSection">
+    <h2>Welcome to Neon Nexus!</h2>
+    <p>This is your one-stop destination for all things fun, interactive, and creative. From games to notes, challenges to leaderboards, there's always something exciting here to explore!</p>
+    <div class="author-info">
+      <p>Anonymous people made this.</p>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar toggle function
+    function toggleSidebar() {
+      var sidebar = document.getElementById("sidebar");
+      if (sidebar.style.width === "250px") {
+        sidebar.style.width = "0";
+      } else {
+        sidebar.style.width = "250px";
+      }
+    }
+
+    // Navigation function for sidebar links
+    function navigateTo(feature) {
+      alert("Navigating to " + feature);
+      // You can replace the alert with actual navigation code to load respective content
+    }
+
+    // Show info section after scrolling
+    window.onscroll = function() {
+      var infoSection = document.getElementById("infoSection");
+      if (window.scrollY > 100) { // Change 100 to control when the section appears
+        infoSection.style.display = "block";
+      }
+    };
+  </script>
+</body>
+</html>
