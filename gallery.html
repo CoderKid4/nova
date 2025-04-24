@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Homework Gallery - Big Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: #0d1117;
+      color: white;
+      padding: 40px 20px;
+      overflow-y: auto; 
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #00e5ff;
+      text-shadow: 0 0 20px #00e5ff;
+    }
+
+    .search-bar {
+      max-width: 600px;
+      margin: 20px auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .gallery-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 20px;
+    }
+
+    .homework-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .homework-item img:hover {
+      transform: scale(1.05);
+    }
+
+    .card {
+      background: #1f2937;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+      overflow: hidden;
+      padding: 15px;
+      color: white;
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* Advanced Like Button Styles */
+    .like-container {
+      position: relative;
+      
+      margin-top: 10px; /* Adjust spacing below the card */
+      display: flex;
+  flex-direction: row; /* ensure horizontal layout */
+  align-items: center; /* center vertically */
+  gap: 8px; /* space between button and count */
+    }
+
+    .like-button {
+      background: #fff;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 4px; /* smaller padding = smaller button */
+  width: 32px;
+  height: 32px;
+      border-radius: 50%;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+      position: relative;
+      transition: transform 0.2s ease;
+      
+      
+    }
+
+    .like-button:active {
+      transform: scale(0.9);
+    }
+
+    .thumbs-up {
+      width: 23px;
+      height: 23px;
+      fill: #888; /* Default color */
+      transition: fill 0.3s ease;
+    }
+
+    .like-button.liked .thumbs-up {
+      fill: #3ea6ff; /* Color when liked */
+    }
+
+    .like-count {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 5px;
+      color: #444;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(62, 166, 255, 0.4);
+      pointer-events: none;
+      animation: bubbleAnimation 0.6s forwards ease-out;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.2);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes bubbleAnimation {
+      0% {
+        opacity: 1;
+        transform: scale(0.3);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(2);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Homework Gallery</h1>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search (This is a work in progress. ⚡ MAY NOT WORK)">
+  </div>
+
+  <div class="gallery-container" id="gallery"></div>
+
+  <script>
+    const gallery = document.getElementById('gallery');
+    const searchInput = document.getElementById('searchInput');
+
+    let homeworkItems = JSON.parse(localStorage.getItem('homeworkUploads') || '[]');
+
+    function animatePop(element) {
+      element.style.animation = "pop 300ms ease-in-out";
+      element.addEventListener("animationend", () => {
+        element.style.animation = "";
+      }, { once: true });
+    }
+
+    function createBubbles(button) {
+      for (let i = 0; i < 5; i++) {
+        const bubble = document.createElement("div");
+        bubble.classList.add("bubble");
+        const size = Math.random() * 10 + 10;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        const offsetX = Math.random() * 40 - 20;
+        const offsetY = Math.random() * 40 - 20;
+        bubble.style.left = `${button.offsetWidth / 2 + offsetX - size / 2}px`;
+        bubble.style.top = `${button.offsetHeight / 2 + offsetY - size / 2}px`;
+
+        button.appendChild(bubble);
+
+        bubble.addEventListener("animationend", () => {
+          bubble.remove();
+        });
+      }
+    }
+
+    function renderGallery() {
+      gallery.innerHTML = '';
+      homeworkItems.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('homework-item');
+
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.assignment;
+
+        const details = document.createElement('div');
+        details.innerHTML = `<strong>${item.name}</strong><br>
+                             Assignment: ${item.assignment}<br>
+                             Course: ${item.course}<br>
+                             Teacher: ${item.teacher}`;
+
+        const likeContainer = document.createElement('div');
+        likeContainer.classList.add('like-container');
+
+        const likeButton = document.createElement('button');
+        likeButton.classList.add('like-button');
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.classList.add('thumbs-up');
+        svg.setAttribute("viewBox", "0 0 24 24");
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", "M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.78 0 1.48-.45 1.79-1.13l3.02-7.05c.09-.23.13-.47.13-.73z");
+        svg.appendChild(path);
+        likeButton.appendChild(svg);
+
+        const likeCount = document.createElement('div');
+        likeCount.classList.add('like-count');
+        likeCount.textContent = item.likes || 0;
+
+        likeButton.onclick = function () {
+          likeButton.classList.toggle('liked');
+          createBubbles(likeButton);
+          animatePop(likeButton);
+          const count = parseInt(likeCount.textContent, 10);
+          likeCount.textContent = likeButton.classList.contains('liked') ? count + 1 : count - 1;
+        };
+
+        likeContainer.appendChild(likeButton);
+        likeContainer.appendChild(likeCount);
+			
+                  img.onclick = function() {
+          const fullImage = document.createElement('img');
+          fullImage.src = item.image;
+          fullImage.style.position = 'fixed';
+          fullImage.style.top = '50%';
+          fullImage.style.left = '50%';
+          fullImage.style.transform = 'translate(-50%, -50%)';
+          fullImage.style.maxWidth = '80%';
+          fullImage.style.maxHeight = '80%';
+          fullImage.style.zIndex = '1000';
+          fullImage.style.cursor = 'pointer';
+          fullImage.onclick = () => fullImage.remove();
+          document.body.appendChild(fullImage);
+        };
+
+            
+        itemDiv.appendChild(img);
+        itemDiv.appendChild(details);
+        itemDiv.appendChild(likeContainer);
+        gallery.appendChild(itemDiv);
+      });
+    }
+    function filterItems(query) {
+  return homeworkItems.filter(item => 
+    item.name.toLowerCase().includes(query.toLowerCase()) ||
+    item.assignment.toLowerCase().includes(query.toLowerCase()) ||
+    item.course.toLowerCase().includes(query.toLowerCase())
+  );
+}
+		searchInput.addEventListener('input', () => {
+  const filteredItems = filterItems(searchInput.value);
+  renderGallery(filteredItems);
+});
+    renderGallery();
+  </script>
+</body>
+</html>
